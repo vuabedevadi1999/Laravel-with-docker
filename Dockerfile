@@ -41,15 +41,6 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # Copy existing application directory contents
 COPY . /var/www
-COPY /src/package.json /var/www/
-COPY /src/package-lock.json /var/www/
-RUN npm install
-RUN npm install laravel-mix@latest --save-dev
-RUN composer install
-RUN php artisan key:generate 
-RUN php artisan jwt:secret
-
-
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
 
