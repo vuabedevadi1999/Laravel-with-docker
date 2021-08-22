@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+    	$this->call([
+        	RoleSeeder::class,
+    	]);
         \App\Models\User::factory(10)->create()->each(function($user){
             $roleStudent = Role::where('name','Student')->first();
             $roleAdmin = Role::where('name','Admin')->first();
