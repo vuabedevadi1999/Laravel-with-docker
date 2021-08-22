@@ -151,7 +151,7 @@ export default {
     data(){ 
         return {
             errors : null,
-            loading : false,
+            loading : true,
             profile:{
                 id:null,
                 name:'',

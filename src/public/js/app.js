@@ -2181,6 +2181,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mixins: [_validateMixin__WEBPACK_IMPORTED_MODULE_0__.validateForm],
@@ -2188,6 +2194,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       errors: null,
+      loading: true,
       profile: {
         id: null,
         name: '',
@@ -2207,12 +2214,18 @@ __webpack_require__.r(__webpack_exports__);
     if (this.$store.state.token != '') {
       axios.post('/api/checkToken').then(function (response) {
         if (response) {
+          _this.loading = false;
+
           _this.getProfile();
         }
       })["catch"](function (err) {
         if (err.response.status === 401) {
+          _this.loading = false;
+
           _this.getProfile();
         } else {
+          _this.loading = false;
+
           _this.$store.commit('clearToken');
 
           _this.$store.commit('clearUser');
@@ -2222,6 +2235,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     } else {
+      this.loading = false;
       this.$router.push('login'); //chuyen sang trang login
     }
   },
@@ -45642,866 +45656,991 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container emp-profile" }, [
-    _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-md-4" }, [
-        _c("div", { staticClass: "profile-img" }, [
-          _vm.profile.avatar
-            ? _c("img", {
-                staticClass: "avatar",
-                attrs: { src: "./public/images/" + _vm.profile.avatar, alt: "" }
-              })
-            : _c("img", {
-                staticClass: "avatar",
-                attrs: { src: "`./public/images/avatar-default.png`", alt: "" }
-              }),
-          _c("br"),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-info mt-2",
-              attrs: { "data-toggle": "modal", "data-target": "#editProfile" },
-              on: { click: _vm.getProfile }
-            },
-            [_vm._v(_vm._s(_vm.$t("messages.Edit profile")))]
-          ),
-          _c("br"),
-          _vm._v(" "),
-          _c(
-            "button",
-            { staticClass: "btn btn-danger mt-2", on: { click: _vm.logout } },
-            [_vm._v(_vm._s(_vm.$t("messages.Logout")))]
-          )
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-6" }, [
-        _c("div", { staticClass: "profile-head" }, [
-          _c("h5", [
-            _vm._v(
-              "\n                        " +
-                _vm._s(_vm.profile.name) +
-                "\n                    "
-            )
-          ]),
-          _vm._v(" "),
-          _c("h6", [
-            _vm._v(
-              "\n                        " +
-                _vm._s(_vm.profile.job ? _vm.profile.job : "Đang cập nhập") +
-                "\n                    "
-            )
-          ]),
-          _vm._v(" "),
-          _c(
-            "ul",
-            {
-              staticClass: "nav nav-tabs",
-              attrs: { id: "myTab", role: "tablist" }
-            },
-            [
-              _c("li", { staticClass: "nav-item" }, [
+  return _c("div", { staticClass: "profile" }, [
+    _vm.loading
+      ? _c("div", [_vm._m(0)])
+      : _c("div", { staticClass: "container emp-profile" }, [
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-md-4" }, [
+              _c("div", { staticClass: "profile-img" }, [
+                _vm.profile.avatar
+                  ? _c("img", {
+                      staticClass: "avatar",
+                      attrs: {
+                        src: "./public/images/" + _vm.profile.avatar,
+                        alt: ""
+                      }
+                    })
+                  : _vm._e(),
+                _vm._v(" "),
                 _c(
-                  "a",
+                  "button",
                   {
-                    staticClass: "nav-link active",
+                    staticClass: "btn btn-info mt-2",
                     attrs: {
-                      id: "home-tab",
-                      "data-toggle": "tab",
-                      href: "#home",
-                      role: "tab",
-                      "aria-controls": "home",
-                      "aria-selected": "true"
-                    }
-                  },
-                  [_vm._v(_vm._s(_vm.$t("messages.Information")))]
-                )
-              ])
-            ]
-          )
-        ])
-      ])
-    ]),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        staticClass: "modal fade",
-        attrs: {
-          id: "editProfile",
-          tabindex: "-1",
-          role: "dialog",
-          "aria-labelledby": "exampleModalLabel",
-          "aria-hidden": "true"
-        }
-      },
-      [
-        _c(
-          "div",
-          { staticClass: "modal-dialog", attrs: { role: "document" } },
-          [
-            _c("div", { staticClass: "modal-content" }, [
-              _c("div", { staticClass: "modal-header" }, [
-                _c(
-                  "h5",
-                  {
-                    staticClass: "modal-title",
-                    attrs: { id: "exampleModalLabel" }
+                      "data-toggle": "modal",
+                      "data-target": "#editProfile"
+                    },
+                    on: { click: _vm.getProfile }
                   },
                   [_vm._v(_vm._s(_vm.$t("messages.Edit profile")))]
                 ),
+                _c("br"),
                 _vm._v(" "),
-                _vm._m(0)
-              ]),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "modal-body" },
-                [
-                  _c("ValidationObserver", {
-                    scopedSlots: _vm._u([
-                      {
-                        key: "default",
-                        fn: function(ref) {
-                          var handleSubmit = ref.handleSubmit
-                          return [
-                            _c(
-                              "form",
-                              {
-                                attrs: { enctype: "multipart/form-data" },
-                                on: {
-                                  submit: function($event) {
-                                    $event.preventDefault()
-                                    return handleSubmit(_vm.updateProfile)
-                                  }
-                                }
-                              },
-                              [
-                                _c("ValidationProvider", {
-                                  attrs: {
-                                    name: "fullname",
-                                    rules: _vm.validationRules.ruleRequired
-                                  },
-                                  scopedSlots: _vm._u(
-                                    [
-                                      {
-                                        key: "default",
-                                        fn: function(ref) {
-                                          var errors = ref.errors
-                                          return [
-                                            _c(
-                                              "div",
-                                              { staticClass: "form-group" },
-                                              [
-                                                _c(
-                                                  "label",
-                                                  {
-                                                    attrs: {
-                                                      for: "namePrefile"
-                                                    }
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      _vm._s(
-                                                        _vm.$t(
-                                                          "messages.Full name"
-                                                        )
-                                                      )
-                                                    )
-                                                  ]
-                                                ),
-                                                _vm._v(" "),
-                                                _c("input", {
-                                                  directives: [
-                                                    {
-                                                      name: "model",
-                                                      rawName: "v-model",
-                                                      value: _vm.profile.name,
-                                                      expression: "profile.name"
-                                                    }
-                                                  ],
-                                                  staticClass: "form-control",
-                                                  attrs: {
-                                                    type: "text",
-                                                    id: "namePrefile",
-                                                    placeholder: "Enter name"
-                                                  },
-                                                  domProps: {
-                                                    value: _vm.profile.name
-                                                  },
-                                                  on: {
-                                                    input: function($event) {
-                                                      if (
-                                                        $event.target.composing
-                                                      ) {
-                                                        return
-                                                      }
-                                                      _vm.$set(
-                                                        _vm.profile,
-                                                        "name",
-                                                        $event.target.value
-                                                      )
-                                                    }
-                                                  }
-                                                }),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "span",
-                                                  {
-                                                    staticClass:
-                                                      "invalid-feedback"
-                                                  },
-                                                  [_vm._v(_vm._s(errors[0]))]
-                                                ),
-                                                _vm._v(" "),
-                                                _vm.hasError("name")
-                                                  ? _c(
-                                                      "span",
-                                                      {
-                                                        staticClass:
-                                                          "invalid-feedback"
-                                                      },
-                                                      [
-                                                        _vm._v(
-                                                          _vm._s(
-                                                            _vm.firstError(
-                                                              "name"
-                                                            )
-                                                          )
-                                                        )
-                                                      ]
-                                                    )
-                                                  : _vm._e()
-                                              ]
-                                            )
-                                          ]
-                                        }
-                                      }
-                                    ],
-                                    null,
-                                    true
-                                  )
-                                }),
-                                _vm._v(" "),
-                                _c("ValidationProvider", {
-                                  attrs: {
-                                    name: "avatar",
-                                    rules: _vm.validationRules.ruleImage
-                                  },
-                                  scopedSlots: _vm._u(
-                                    [
-                                      {
-                                        key: "default",
-                                        fn: function(ref) {
-                                          var errors = ref.errors
-                                          var validate = ref.validate
-                                          return [
-                                            _c(
-                                              "div",
-                                              { staticClass: "form-group" },
-                                              [
-                                                _c(
-                                                  "label",
-                                                  { attrs: { for: "avatar" } },
-                                                  [
-                                                    _vm._v(
-                                                      _vm._s(
-                                                        _vm.$t(
-                                                          "messages.Avatar"
-                                                        )
-                                                      )
-                                                    )
-                                                  ]
-                                                ),
-                                                _vm._v(" "),
-                                                _c("input", {
-                                                  ref: "file",
-                                                  staticClass: "form-control",
-                                                  attrs: {
-                                                    type: "file",
-                                                    id: "file"
-                                                  },
-                                                  on: {
-                                                    change: [
-                                                      validate,
-                                                      function($event) {
-                                                        return _vm.handleFileUpload()
-                                                      }
-                                                    ]
-                                                  }
-                                                }),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "span",
-                                                  {
-                                                    staticClass:
-                                                      "invalid-feedback"
-                                                  },
-                                                  [_vm._v(_vm._s(errors[0]))]
-                                                ),
-                                                _vm._v(" "),
-                                                _vm.hasError("file")
-                                                  ? _c(
-                                                      "span",
-                                                      {
-                                                        staticClass:
-                                                          "invalid-feedback"
-                                                      },
-                                                      [
-                                                        _vm._v(
-                                                          _vm._s(
-                                                            _vm.firstError(
-                                                              "file"
-                                                            )
-                                                          )
-                                                        )
-                                                      ]
-                                                    )
-                                                  : _vm._e()
-                                              ]
-                                            )
-                                          ]
-                                        }
-                                      }
-                                    ],
-                                    null,
-                                    true
-                                  )
-                                }),
-                                _vm._v(" "),
-                                _c("ValidationProvider", {
-                                  attrs: {
-                                    name: "email",
-                                    rules: _vm.validationRules.ruleEmail
-                                  },
-                                  scopedSlots: _vm._u(
-                                    [
-                                      {
-                                        key: "default",
-                                        fn: function(ref) {
-                                          var errors = ref.errors
-                                          return [
-                                            _c(
-                                              "div",
-                                              { staticClass: "form-group" },
-                                              [
-                                                _c(
-                                                  "label",
-                                                  { attrs: { for: "email" } },
-                                                  [
-                                                    _vm._v(
-                                                      _vm._s(
-                                                        _vm.$t("messages.Email")
-                                                      )
-                                                    )
-                                                  ]
-                                                ),
-                                                _vm._v(" "),
-                                                _c("input", {
-                                                  directives: [
-                                                    {
-                                                      name: "model",
-                                                      rawName: "v-model",
-                                                      value: _vm.profile.email,
-                                                      expression:
-                                                        "profile.email"
-                                                    }
-                                                  ],
-                                                  staticClass: "form-control",
-                                                  attrs: {
-                                                    type: "email",
-                                                    id: "emailProfile",
-                                                    placeholder: "Enter email"
-                                                  },
-                                                  domProps: {
-                                                    value: _vm.profile.email
-                                                  },
-                                                  on: {
-                                                    input: function($event) {
-                                                      if (
-                                                        $event.target.composing
-                                                      ) {
-                                                        return
-                                                      }
-                                                      _vm.$set(
-                                                        _vm.profile,
-                                                        "email",
-                                                        $event.target.value
-                                                      )
-                                                    }
-                                                  }
-                                                }),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "span",
-                                                  {
-                                                    staticClass:
-                                                      "invalid-feedback"
-                                                  },
-                                                  [_vm._v(_vm._s(errors[0]))]
-                                                ),
-                                                _vm._v(" "),
-                                                _vm.hasError("email")
-                                                  ? _c(
-                                                      "span",
-                                                      {
-                                                        staticClass:
-                                                          "invalid-feedback"
-                                                      },
-                                                      [
-                                                        _vm._v(
-                                                          _vm._s(
-                                                            _vm.firstError(
-                                                              "email"
-                                                            )
-                                                          )
-                                                        )
-                                                      ]
-                                                    )
-                                                  : _vm._e()
-                                              ]
-                                            )
-                                          ]
-                                        }
-                                      }
-                                    ],
-                                    null,
-                                    true
-                                  )
-                                }),
-                                _vm._v(" "),
-                                _c("ValidationProvider", {
-                                  attrs: {
-                                    name: "password",
-                                    rules: _vm.validationRules.rulePassword
-                                  },
-                                  scopedSlots: _vm._u(
-                                    [
-                                      {
-                                        key: "default",
-                                        fn: function(ref) {
-                                          var errors = ref.errors
-                                          return [
-                                            _c(
-                                              "div",
-                                              { staticClass: "form-group" },
-                                              [
-                                                _c(
-                                                  "label",
-                                                  {
-                                                    attrs: {
-                                                      for: "oldPassword"
-                                                    }
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      _vm._s(
-                                                        _vm.$t(
-                                                          "messages.Old password"
-                                                        )
-                                                      )
-                                                    )
-                                                  ]
-                                                ),
-                                                _vm._v(" "),
-                                                _c("input", {
-                                                  directives: [
-                                                    {
-                                                      name: "model",
-                                                      rawName: "v-model",
-                                                      value:
-                                                        _vm.profile.oldPassword,
-                                                      expression:
-                                                        "profile.oldPassword"
-                                                    }
-                                                  ],
-                                                  staticClass: "form-control",
-                                                  attrs: {
-                                                    type: "password",
-                                                    id: "oldPassword",
-                                                    placeholder: "Enter phone"
-                                                  },
-                                                  domProps: {
-                                                    value:
-                                                      _vm.profile.oldPassword
-                                                  },
-                                                  on: {
-                                                    input: function($event) {
-                                                      if (
-                                                        $event.target.composing
-                                                      ) {
-                                                        return
-                                                      }
-                                                      _vm.$set(
-                                                        _vm.profile,
-                                                        "oldPassword",
-                                                        $event.target.value
-                                                      )
-                                                    }
-                                                  }
-                                                }),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "span",
-                                                  {
-                                                    staticClass:
-                                                      "invalid-feedback"
-                                                  },
-                                                  [_vm._v(_vm._s(errors[0]))]
-                                                ),
-                                                _vm._v(" "),
-                                                _vm.hasError("oldPassword")
-                                                  ? _c(
-                                                      "span",
-                                                      {
-                                                        staticClass:
-                                                          "invalid-feedback"
-                                                      },
-                                                      [
-                                                        _vm._v(
-                                                          _vm._s(
-                                                            _vm.firstError(
-                                                              "oldPassword"
-                                                            )
-                                                          )
-                                                        )
-                                                      ]
-                                                    )
-                                                  : _vm._e()
-                                              ]
-                                            )
-                                          ]
-                                        }
-                                      }
-                                    ],
-                                    null,
-                                    true
-                                  )
-                                }),
-                                _vm._v(" "),
-                                _c("ValidationProvider", {
-                                  attrs: {
-                                    name: "password",
-                                    rules: _vm.validationRules.rulePassword,
-                                    vid: "profile.newPassword"
-                                  },
-                                  scopedSlots: _vm._u(
-                                    [
-                                      {
-                                        key: "default",
-                                        fn: function(ref) {
-                                          var errors = ref.errors
-                                          return [
-                                            _c(
-                                              "div",
-                                              { staticClass: "form-group" },
-                                              [
-                                                _c(
-                                                  "label",
-                                                  {
-                                                    attrs: {
-                                                      for: "newPassword"
-                                                    }
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      _vm._s(
-                                                        _vm.$t(
-                                                          "messages.New password"
-                                                        )
-                                                      )
-                                                    )
-                                                  ]
-                                                ),
-                                                _vm._v(" "),
-                                                _c("input", {
-                                                  directives: [
-                                                    {
-                                                      name: "model",
-                                                      rawName: "v-model",
-                                                      value:
-                                                        _vm.profile.newPassword,
-                                                      expression:
-                                                        "profile.newPassword"
-                                                    }
-                                                  ],
-                                                  staticClass: "form-control",
-                                                  attrs: {
-                                                    type: "password",
-                                                    id: "newPassword",
-                                                    placeholder: "Enter phone"
-                                                  },
-                                                  domProps: {
-                                                    value:
-                                                      _vm.profile.newPassword
-                                                  },
-                                                  on: {
-                                                    input: function($event) {
-                                                      if (
-                                                        $event.target.composing
-                                                      ) {
-                                                        return
-                                                      }
-                                                      _vm.$set(
-                                                        _vm.profile,
-                                                        "newPassword",
-                                                        $event.target.value
-                                                      )
-                                                    }
-                                                  }
-                                                }),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "span",
-                                                  {
-                                                    staticClass:
-                                                      "invalid-feedback"
-                                                  },
-                                                  [_vm._v(_vm._s(errors[0]))]
-                                                ),
-                                                _vm._v(" "),
-                                                _vm.hasError("password")
-                                                  ? _c(
-                                                      "span",
-                                                      {
-                                                        staticClass:
-                                                          "invalid-feedback"
-                                                      },
-                                                      [
-                                                        _vm._v(
-                                                          _vm._s(
-                                                            _vm.firstError(
-                                                              "password"
-                                                            )
-                                                          )
-                                                        )
-                                                      ]
-                                                    )
-                                                  : _vm._e()
-                                              ]
-                                            )
-                                          ]
-                                        }
-                                      }
-                                    ],
-                                    null,
-                                    true
-                                  )
-                                }),
-                                _vm._v(" "),
-                                _c("ValidationProvider", {
-                                  attrs: {
-                                    name: "password",
-                                    rules:
-                                      _vm.validationRules.rulePasswordConfirm,
-                                    vid: "confirmation"
-                                  },
-                                  scopedSlots: _vm._u(
-                                    [
-                                      {
-                                        key: "default",
-                                        fn: function(ref) {
-                                          var errors = ref.errors
-                                          return [
-                                            _c(
-                                              "div",
-                                              { staticClass: "form-group" },
-                                              [
-                                                _c(
-                                                  "label",
-                                                  {
-                                                    attrs: {
-                                                      for: "passwordConfirm"
-                                                    }
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      _vm._s(
-                                                        _vm.$t(
-                                                          "messages.Confirm Password"
-                                                        )
-                                                      )
-                                                    )
-                                                  ]
-                                                ),
-                                                _vm._v(" "),
-                                                _c("input", {
-                                                  directives: [
-                                                    {
-                                                      name: "model",
-                                                      rawName: "v-model",
-                                                      value:
-                                                        _vm.profile
-                                                          .passwordConfirm,
-                                                      expression:
-                                                        "profile.passwordConfirm"
-                                                    }
-                                                  ],
-                                                  staticClass: "form-control",
-                                                  attrs: {
-                                                    type: "password",
-                                                    id: "passwordConfirm",
-                                                    placeholder: "Enter phone"
-                                                  },
-                                                  domProps: {
-                                                    value:
-                                                      _vm.profile
-                                                        .passwordConfirm
-                                                  },
-                                                  on: {
-                                                    input: function($event) {
-                                                      if (
-                                                        $event.target.composing
-                                                      ) {
-                                                        return
-                                                      }
-                                                      _vm.$set(
-                                                        _vm.profile,
-                                                        "passwordConfirm",
-                                                        $event.target.value
-                                                      )
-                                                    }
-                                                  }
-                                                }),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "span",
-                                                  {
-                                                    staticClass:
-                                                      "invalid-feedback"
-                                                  },
-                                                  [_vm._v(_vm._s(errors[0]))]
-                                                ),
-                                                _vm._v(" "),
-                                                _vm.hasError(
-                                                  "password_confirmation"
-                                                )
-                                                  ? _c(
-                                                      "span",
-                                                      {
-                                                        staticClass:
-                                                          "invalid-feedback"
-                                                      },
-                                                      [
-                                                        _vm._v(
-                                                          _vm._s(
-                                                            _vm.firstError(
-                                                              "password_confirmation"
-                                                            )
-                                                          )
-                                                        )
-                                                      ]
-                                                    )
-                                                  : _vm._e()
-                                              ]
-                                            )
-                                          ]
-                                        }
-                                      }
-                                    ],
-                                    null,
-                                    true
-                                  )
-                                }),
-                                _vm._v(" "),
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-primary",
-                                    attrs: { type: "submit" }
-                                  },
-                                  [_vm._v(_vm._s(_vm.$t("messages.Submit")))]
-                                )
-                              ],
-                              1
-                            )
-                          ]
-                        }
-                      }
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-danger mt-2",
+                    on: { click: _vm.logout }
+                  },
+                  [_vm._v(_vm._s(_vm.$t("messages.Logout")))]
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-6" }, [
+              _c("div", { staticClass: "profile-head" }, [
+                _c("h5", [
+                  _vm._v(
+                    "\n                            " +
+                      _vm._s(_vm.profile.name) +
+                      "\n                        "
+                  )
+                ]),
+                _vm._v(" "),
+                _c("h6", [
+                  _vm._v(
+                    "\n                            " +
+                      _vm._s(
+                        _vm.profile.job ? _vm.profile.job : "Đang cập nhập"
+                      ) +
+                      "\n                        "
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "ul",
+                  {
+                    staticClass: "nav nav-tabs",
+                    attrs: { id: "myTab", role: "tablist" }
+                  },
+                  [
+                    _c("li", { staticClass: "nav-item" }, [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "nav-link active",
+                          attrs: {
+                            id: "home-tab",
+                            "data-toggle": "tab",
+                            href: "#home",
+                            role: "tab",
+                            "aria-controls": "home",
+                            "aria-selected": "true"
+                          }
+                        },
+                        [_vm._v(_vm._s(_vm.$t("messages.Information")))]
+                      )
                     ])
-                  })
-                ],
-                1
-              )
+                  ]
+                )
+              ])
             ])
-          ]
-        )
-      ]
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-md-4" }),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "col-md-8", staticStyle: { "margin-top": "-62px" } },
-        [
+          ]),
+          _vm._v(" "),
           _c(
             "div",
             {
-              staticClass: "tab-content profile-tab",
-              attrs: { id: "myTabContent" }
+              staticClass: "modal fade",
+              attrs: {
+                id: "editProfile",
+                tabindex: "-1",
+                role: "dialog",
+                "aria-labelledby": "exampleModalLabel",
+                "aria-hidden": "true"
+              }
             },
             [
               _c(
                 "div",
-                {
-                  staticClass: "tab-pane fade show active",
-                  attrs: {
-                    id: "home",
-                    role: "tabpanel",
-                    "aria-labelledby": "home-tab"
-                  }
-                },
+                { staticClass: "modal-dialog", attrs: { role: "document" } },
                 [
-                  _c("div", { staticClass: "row" }, [
-                    _vm._m(1),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-6" }, [
-                      _c("p", [_vm._v(_vm._s(_vm.profile.id))])
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "row" }, [
-                    _c("div", { staticClass: "col-md-6" }, [
-                      _c("label", [
-                        _vm._v(_vm._s(_vm.$t("messages.Full name")))
-                      ])
+                  _c("div", { staticClass: "modal-content" }, [
+                    _c("div", { staticClass: "modal-header" }, [
+                      _c(
+                        "h5",
+                        {
+                          staticClass: "modal-title",
+                          attrs: { id: "exampleModalLabel" }
+                        },
+                        [_vm._v(_vm._s(_vm.$t("messages.Edit profile")))]
+                      ),
+                      _vm._v(" "),
+                      _vm._m(1)
                     ]),
                     _vm._v(" "),
-                    _c("div", { staticClass: "col-md-6" }, [
-                      _c("p", [_vm._v(_vm._s(_vm.profile.name))])
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "row" }, [
-                    _c("div", { staticClass: "col-md-6" }, [
-                      _c("label", [_vm._v(_vm._s(_vm.$t("messages.Email")))])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "col-md-6" }, [
-                      _c("p", [_vm._v(_vm._s(_vm.profile.email))])
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "row" }, [
-                    _c("div", { staticClass: "col-md-6" }, [
-                      _c("label", [_vm._v(_vm._s(_vm.$t("messages.Password")))])
-                    ]),
-                    _vm._v(" "),
-                    _vm._m(2)
+                    _c(
+                      "div",
+                      { staticClass: "modal-body" },
+                      [
+                        _c("ValidationObserver", {
+                          scopedSlots: _vm._u([
+                            {
+                              key: "default",
+                              fn: function(ref) {
+                                var handleSubmit = ref.handleSubmit
+                                return [
+                                  _c(
+                                    "form",
+                                    {
+                                      attrs: { enctype: "multipart/form-data" },
+                                      on: {
+                                        submit: function($event) {
+                                          $event.preventDefault()
+                                          return handleSubmit(_vm.updateProfile)
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c("ValidationProvider", {
+                                        attrs: {
+                                          name: "fullname",
+                                          rules:
+                                            _vm.validationRules.ruleRequired
+                                        },
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "default",
+                                              fn: function(ref) {
+                                                var errors = ref.errors
+                                                return [
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass: "form-group"
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "label",
+                                                        {
+                                                          attrs: {
+                                                            for: "namePrefile"
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(
+                                                              _vm.$t(
+                                                                "messages.Full name"
+                                                              )
+                                                            )
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("input", {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value:
+                                                              _vm.profile.name,
+                                                            expression:
+                                                              "profile.name"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          type: "text",
+                                                          id: "namePrefile",
+                                                          placeholder:
+                                                            "Enter name"
+                                                        },
+                                                        domProps: {
+                                                          value:
+                                                            _vm.profile.name
+                                                        },
+                                                        on: {
+                                                          input: function(
+                                                            $event
+                                                          ) {
+                                                            if (
+                                                              $event.target
+                                                                .composing
+                                                            ) {
+                                                              return
+                                                            }
+                                                            _vm.$set(
+                                                              _vm.profile,
+                                                              "name",
+                                                              $event.target
+                                                                .value
+                                                            )
+                                                          }
+                                                        }
+                                                      }),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "span",
+                                                        {
+                                                          staticClass:
+                                                            "invalid-feedback"
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(errors[0])
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _vm.hasError("name")
+                                                        ? _c(
+                                                            "span",
+                                                            {
+                                                              staticClass:
+                                                                "invalid-feedback"
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                _vm._s(
+                                                                  _vm.firstError(
+                                                                    "name"
+                                                                  )
+                                                                )
+                                                              )
+                                                            ]
+                                                          )
+                                                        : _vm._e()
+                                                    ]
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          true
+                                        )
+                                      }),
+                                      _vm._v(" "),
+                                      _c("ValidationProvider", {
+                                        attrs: {
+                                          name: "avatar",
+                                          rules: _vm.validationRules.ruleImage
+                                        },
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "default",
+                                              fn: function(ref) {
+                                                var errors = ref.errors
+                                                var validate = ref.validate
+                                                return [
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass: "form-group"
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "label",
+                                                        {
+                                                          attrs: {
+                                                            for: "avatar"
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(
+                                                              _vm.$t(
+                                                                "messages.Avatar"
+                                                              )
+                                                            )
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("input", {
+                                                        ref: "file",
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          type: "file",
+                                                          id: "file"
+                                                        },
+                                                        on: {
+                                                          change: [
+                                                            validate,
+                                                            function($event) {
+                                                              return _vm.handleFileUpload()
+                                                            }
+                                                          ]
+                                                        }
+                                                      }),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "span",
+                                                        {
+                                                          staticClass:
+                                                            "invalid-feedback"
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(errors[0])
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _vm.hasError("file")
+                                                        ? _c(
+                                                            "span",
+                                                            {
+                                                              staticClass:
+                                                                "invalid-feedback"
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                _vm._s(
+                                                                  _vm.firstError(
+                                                                    "file"
+                                                                  )
+                                                                )
+                                                              )
+                                                            ]
+                                                          )
+                                                        : _vm._e()
+                                                    ]
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          true
+                                        )
+                                      }),
+                                      _vm._v(" "),
+                                      _c("ValidationProvider", {
+                                        attrs: {
+                                          name: "email",
+                                          rules: _vm.validationRules.ruleEmail
+                                        },
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "default",
+                                              fn: function(ref) {
+                                                var errors = ref.errors
+                                                return [
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass: "form-group"
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "label",
+                                                        {
+                                                          attrs: {
+                                                            for: "email"
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(
+                                                              _vm.$t(
+                                                                "messages.Email"
+                                                              )
+                                                            )
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("input", {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value:
+                                                              _vm.profile.email,
+                                                            expression:
+                                                              "profile.email"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          type: "email",
+                                                          id: "emailProfile",
+                                                          placeholder:
+                                                            "Enter email"
+                                                        },
+                                                        domProps: {
+                                                          value:
+                                                            _vm.profile.email
+                                                        },
+                                                        on: {
+                                                          input: function(
+                                                            $event
+                                                          ) {
+                                                            if (
+                                                              $event.target
+                                                                .composing
+                                                            ) {
+                                                              return
+                                                            }
+                                                            _vm.$set(
+                                                              _vm.profile,
+                                                              "email",
+                                                              $event.target
+                                                                .value
+                                                            )
+                                                          }
+                                                        }
+                                                      }),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "span",
+                                                        {
+                                                          staticClass:
+                                                            "invalid-feedback"
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(errors[0])
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _vm.hasError("email")
+                                                        ? _c(
+                                                            "span",
+                                                            {
+                                                              staticClass:
+                                                                "invalid-feedback"
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                _vm._s(
+                                                                  _vm.firstError(
+                                                                    "email"
+                                                                  )
+                                                                )
+                                                              )
+                                                            ]
+                                                          )
+                                                        : _vm._e()
+                                                    ]
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          true
+                                        )
+                                      }),
+                                      _vm._v(" "),
+                                      _c("ValidationProvider", {
+                                        attrs: {
+                                          name: "password",
+                                          rules:
+                                            _vm.validationRules.rulePassword
+                                        },
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "default",
+                                              fn: function(ref) {
+                                                var errors = ref.errors
+                                                return [
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass: "form-group"
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "label",
+                                                        {
+                                                          attrs: {
+                                                            for: "oldPassword"
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(
+                                                              _vm.$t(
+                                                                "messages.Old password"
+                                                              )
+                                                            )
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("input", {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value:
+                                                              _vm.profile
+                                                                .oldPassword,
+                                                            expression:
+                                                              "profile.oldPassword"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          type: "password",
+                                                          id: "oldPassword",
+                                                          placeholder:
+                                                            "Enter phone"
+                                                        },
+                                                        domProps: {
+                                                          value:
+                                                            _vm.profile
+                                                              .oldPassword
+                                                        },
+                                                        on: {
+                                                          input: function(
+                                                            $event
+                                                          ) {
+                                                            if (
+                                                              $event.target
+                                                                .composing
+                                                            ) {
+                                                              return
+                                                            }
+                                                            _vm.$set(
+                                                              _vm.profile,
+                                                              "oldPassword",
+                                                              $event.target
+                                                                .value
+                                                            )
+                                                          }
+                                                        }
+                                                      }),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "span",
+                                                        {
+                                                          staticClass:
+                                                            "invalid-feedback"
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(errors[0])
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _vm.hasError(
+                                                        "oldPassword"
+                                                      )
+                                                        ? _c(
+                                                            "span",
+                                                            {
+                                                              staticClass:
+                                                                "invalid-feedback"
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                _vm._s(
+                                                                  _vm.firstError(
+                                                                    "oldPassword"
+                                                                  )
+                                                                )
+                                                              )
+                                                            ]
+                                                          )
+                                                        : _vm._e()
+                                                    ]
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          true
+                                        )
+                                      }),
+                                      _vm._v(" "),
+                                      _c("ValidationProvider", {
+                                        attrs: {
+                                          name: "password",
+                                          rules:
+                                            _vm.validationRules.rulePassword,
+                                          vid: "profile.newPassword"
+                                        },
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "default",
+                                              fn: function(ref) {
+                                                var errors = ref.errors
+                                                return [
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass: "form-group"
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "label",
+                                                        {
+                                                          attrs: {
+                                                            for: "newPassword"
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(
+                                                              _vm.$t(
+                                                                "messages.New password"
+                                                              )
+                                                            )
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("input", {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value:
+                                                              _vm.profile
+                                                                .newPassword,
+                                                            expression:
+                                                              "profile.newPassword"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          type: "password",
+                                                          id: "newPassword",
+                                                          placeholder:
+                                                            "Enter phone"
+                                                        },
+                                                        domProps: {
+                                                          value:
+                                                            _vm.profile
+                                                              .newPassword
+                                                        },
+                                                        on: {
+                                                          input: function(
+                                                            $event
+                                                          ) {
+                                                            if (
+                                                              $event.target
+                                                                .composing
+                                                            ) {
+                                                              return
+                                                            }
+                                                            _vm.$set(
+                                                              _vm.profile,
+                                                              "newPassword",
+                                                              $event.target
+                                                                .value
+                                                            )
+                                                          }
+                                                        }
+                                                      }),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "span",
+                                                        {
+                                                          staticClass:
+                                                            "invalid-feedback"
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(errors[0])
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _vm.hasError("password")
+                                                        ? _c(
+                                                            "span",
+                                                            {
+                                                              staticClass:
+                                                                "invalid-feedback"
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                _vm._s(
+                                                                  _vm.firstError(
+                                                                    "password"
+                                                                  )
+                                                                )
+                                                              )
+                                                            ]
+                                                          )
+                                                        : _vm._e()
+                                                    ]
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          true
+                                        )
+                                      }),
+                                      _vm._v(" "),
+                                      _c("ValidationProvider", {
+                                        attrs: {
+                                          name: "password",
+                                          rules:
+                                            _vm.validationRules
+                                              .rulePasswordConfirm,
+                                          vid: "confirmation"
+                                        },
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "default",
+                                              fn: function(ref) {
+                                                var errors = ref.errors
+                                                return [
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass: "form-group"
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "label",
+                                                        {
+                                                          attrs: {
+                                                            for:
+                                                              "passwordConfirm"
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(
+                                                              _vm.$t(
+                                                                "messages.Confirm Password"
+                                                              )
+                                                            )
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("input", {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value:
+                                                              _vm.profile
+                                                                .passwordConfirm,
+                                                            expression:
+                                                              "profile.passwordConfirm"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          type: "password",
+                                                          id: "passwordConfirm",
+                                                          placeholder:
+                                                            "Enter phone"
+                                                        },
+                                                        domProps: {
+                                                          value:
+                                                            _vm.profile
+                                                              .passwordConfirm
+                                                        },
+                                                        on: {
+                                                          input: function(
+                                                            $event
+                                                          ) {
+                                                            if (
+                                                              $event.target
+                                                                .composing
+                                                            ) {
+                                                              return
+                                                            }
+                                                            _vm.$set(
+                                                              _vm.profile,
+                                                              "passwordConfirm",
+                                                              $event.target
+                                                                .value
+                                                            )
+                                                          }
+                                                        }
+                                                      }),
+                                                      _vm._v(" "),
+                                                      _c(
+                                                        "span",
+                                                        {
+                                                          staticClass:
+                                                            "invalid-feedback"
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            _vm._s(errors[0])
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _vm.hasError(
+                                                        "password_confirmation"
+                                                      )
+                                                        ? _c(
+                                                            "span",
+                                                            {
+                                                              staticClass:
+                                                                "invalid-feedback"
+                                                            },
+                                                            [
+                                                              _vm._v(
+                                                                _vm._s(
+                                                                  _vm.firstError(
+                                                                    "password_confirmation"
+                                                                  )
+                                                                )
+                                                              )
+                                                            ]
+                                                          )
+                                                        : _vm._e()
+                                                    ]
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          true
+                                        )
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "button",
+                                        {
+                                          staticClass: "btn btn-primary",
+                                          attrs: { type: "submit" }
+                                        },
+                                        [
+                                          _vm._v(
+                                            _vm._s(_vm.$t("messages.Submit"))
+                                          )
+                                        ]
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ]
+                              }
+                            }
+                          ])
+                        })
+                      ],
+                      1
+                    )
                   ])
                 ]
               )
             ]
-          )
-        ]
-      )
-    ])
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-md-4" }),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "col-md-8",
+                staticStyle: { "margin-top": "-62px" }
+              },
+              [
+                _c(
+                  "div",
+                  {
+                    staticClass: "tab-content profile-tab",
+                    attrs: { id: "myTabContent" }
+                  },
+                  [
+                    _c(
+                      "div",
+                      {
+                        staticClass: "tab-pane fade show active",
+                        attrs: {
+                          id: "home",
+                          role: "tabpanel",
+                          "aria-labelledby": "home-tab"
+                        }
+                      },
+                      [
+                        _c("div", { staticClass: "row" }, [
+                          _vm._m(2),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-md-6" }, [
+                            _c("p", [_vm._v(_vm._s(_vm.profile.id))])
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row" }, [
+                          _c("div", { staticClass: "col-md-6" }, [
+                            _c("label", [
+                              _vm._v(_vm._s(_vm.$t("messages.Full name")))
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-md-6" }, [
+                            _c("p", [_vm._v(_vm._s(_vm.profile.name))])
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row" }, [
+                          _c("div", { staticClass: "col-md-6" }, [
+                            _c("label", [
+                              _vm._v(_vm._s(_vm.$t("messages.Email")))
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-md-6" }, [
+                            _c("p", [_vm._v(_vm._s(_vm.profile.email))])
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "row" }, [
+                          _c("div", { staticClass: "col-md-6" }, [
+                            _c("label", [
+                              _vm._v(_vm._s(_vm.$t("messages.Password")))
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _vm._m(3)
+                        ])
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          ])
+        ])
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      { staticClass: "spinner-border", attrs: { role: "status" } },
+      [_c("span", { staticClass: "sr-only" }, [_vm._v("Loading...")])]
+    )
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -64715,12 +64854,14 @@ module.exports = JSON.parse('{"code":"vi","messages":{"alpha":"{_field_} chỉ c
 /******/ 			// add "moreModules" to the modules object,
 /******/ 			// then flag all "chunkIds" as loaded and fire callback
 /******/ 			var moduleId, chunkId, i = 0;
-/******/ 			for(moduleId in moreModules) {
-/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
-/******/ 					__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 			if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
+/******/ 				for(moduleId in moreModules) {
+/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 					}
 /******/ 				}
+/******/ 				if(runtime) var result = runtime(__webpack_require__);
 /******/ 			}
-/******/ 			if(runtime) var result = runtime(__webpack_require__);
 /******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
 /******/ 			for(;i < chunkIds.length; i++) {
 /******/ 				chunkId = chunkIds[i];

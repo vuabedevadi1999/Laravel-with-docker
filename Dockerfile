@@ -1,30 +1,35 @@
-FROM php:7.3-fpm
+FROM php:7.4-fpm
 
 # Copy composer.lock and composer.json
-#COPY composer.lock composer.json /var/www/
+COPY /src/composer.lock /src/composer.json /var/www/
 
 # Set working directory
 WORKDIR /var/www
 
 # Install dependencies
+RUN echo "Acquire::Check-Valid-Until \"false\";\nAcquire::Check-Date \"false\";" | cat > /etc/apt/apt.conf.d/10no--check-valid-until
+# Install dependencies for the operating system software
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
     locales \
-    libzip-dev \
+    zip \
     jpegoptim optipng pngquant gifsicle \
     vim \
+    libzip-dev \
     unzip \
     git \
+    libonig-dev \
     curl
+ 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install extensions
+ 
+# Install extensions for php
 RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
-RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install gd
 
 # Install composer
@@ -36,12 +41,21 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # Copy existing application directory contents
 COPY . /var/www
+COPY /src/package.json /var/www/
+COPY /src/package-lock.json /var/www/
+RUN npm install
+RUN npm install laravel-mix@latest --save-dev
+RUN composer install
+RUN php artisan key:generate 
+RUN php artisan jwt:secret
+
 
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
 
 # Change current user to www
 USER www
+
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000

@@ -10,6 +10,9 @@ services:
     container_name: php_${APP_NAME}
     restart: unless-stopped
     tty: true
+    environment:
+      SERVICE_NAME: php
+      SERVICE_TAGS: dev
     volumes:
       - ./src:/var/www
       - ./services/php/local.ini:/usr/local/etc/php/conf.d/local.ini
