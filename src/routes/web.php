@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LanguageController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,4 +14,5 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::post('/social/{provider}', [AuthController::class,'handleProviderCallback'])->name('auth.callback');
 Route::view('/{app?}', 'welcome')->where('app','.*');

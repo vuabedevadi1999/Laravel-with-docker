@@ -32,6 +32,7 @@
                                     <button type="submit" class="btn btn-primary">{{ $t('messages.Login') }}</button>
                                 </form>
                              </ValidationObserver>
+                             <button type="submit" class="btn btn-primary mt-2" @click="authProvider('google')">Dang nhap bang facebook</button>
                         </div>
                     </div>
                 </div>
@@ -77,6 +78,26 @@ export default {
         }
     },
     methods : {
+        authProvider(provider) {
+            let self = this;
+            this.$auth.authenticate(provider).then(response => {
+                self.socialLogin(provider,response)
+            }).catch(err => {
+                console.log({err:err})
+            })
+        },
+        socialLogin(provider,response) {
+            this.$http.post('/social/'+provider, response).then(response => {
+                if(response.data.success){
+                    this.$store.commit('setToken',response.data.token)
+                    this.$store.commit('setUser',response.data.user)
+                    this.$router.push('students');
+                }
+            }).catch(err => {
+                this.errors = err.response.data.errors;
+                console.log({err:err})
+            })
+        },
         login(){
             //call api
             axios.post('api/login',this.credentials)

@@ -10,7 +10,19 @@ import axios from 'axios';
 import CKEditor  from "ckeditor4-vue";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
 Vue.config.productionTip = false;
+import VueAxios from 'vue-axios'
+import VueSocialauth from 'vue-social-auth'
 Vue.use(CKEditor);
+Vue.use(VueAxios, axios);
+Vue.use(VueSocialauth, {
+    providers: {
+        google: {
+            clientId: '814023748086-dj8s68mi8c0f3gfm3976hbb4onadtbmg.apps.googleusercontent.com',
+            client_secret: 'YUKnOZklJ_3ANi737EDkDgX_',
+            redirectUri: 'http://localhost:8000/callback'
+        }
+    }
+});
 Vue.component('ValidationProvider',ValidationProvider);
 Vue.component('ValidationObserver',ValidationObserver)
 axios.interceptors.request.use((config)=>{

@@ -1,5 +1,5 @@
 <template>
-    <div class="profile">
+    <div class="profile" v-cloak>
         <div v-if="loading">
             <div class="spinner-border" role="status">
                 <span class="sr-only">Loading...</span>
@@ -9,7 +9,8 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="profile-img">
-                            <img v-if="profile.avatar" class="avatar" :src="`./public/images/`+profile.avatar" alt=""/>
+                            <img v-if="profile.avatar && profile.avatar_type == null" class="avatar" :src="`./public/images/`+profile.avatar" alt=""/>
+                            <img v-else-if="profile.avatar && profile.avatar_type == 1" class="avatar" :src="profile.avatar" alt=""/>
                             <button class="btn btn-info mt-2" @click="getProfile" data-toggle="modal" data-target="#editProfile">{{ $t('messages.Edit profile') }}</button><br>
                             <button class="btn btn-danger mt-2" @click="logout">{{ $t('messages.Logout')}}</button>
                         </div>
@@ -128,14 +129,6 @@
                                         <p>{{ profile.email }}</p>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>{{ $t('messages.Password') }}</label>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p>*************</p>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -158,6 +151,7 @@ export default {
                 email:'',
                 file: '',
                 avatar:'',
+                avatar_type:null,
                 job:'',
                 oldPassword:'',
                 newPassword:'',
@@ -201,6 +195,7 @@ export default {
                         this.profile.id = response.data.user.id
                         this.profile.name = response.data.user.name
                         this.profile.avatar = response.data.user.avatar
+                        this.profile.avatar_type = response.data.user.avatar_type
                         this.profile.job = response.data.user.job
                         this.profile.email = response.data.user.email
                     }
