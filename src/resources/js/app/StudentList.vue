@@ -160,6 +160,7 @@ export default {
     name: "StudentList",
     data(){
         return {
+            isRoleValid:false,
             errors : null,
             loading:true,
             student: {
@@ -179,25 +180,31 @@ export default {
             studentData:{}
         }
     },
+    created(){
+        this.$authorize('checkRole').then(response => {
+             this.isRoleValid = response;
+        });
+        //this.$authorize('checkRole') chỉ return về promise muốn lấy data phải .then()
+    },
     mounted(){
         if(this.$store.state.token != ''){
             axios.post('/api/checkToken')
                 .then(response=>{
                     if(response){
                         this.loading = false;
-                        this.getAllStudent();
+                        if(this.isRoleValid == true){
+                            this.getAllStudent();
+                        }else{
+                            this.$router.push('profile')
+                        }
                     }
                 })
                 .catch(err=>{
-                    console.log(err)
-                    if(err.response.status === 401){
-                        this.$router.push('profile')
-                    }else{
-                        this.loading = false;
-                        this.$store.commit('clearToken');
-                        this.$store.commit('clearUser');
-                        this.$router.push('login');//chuyen sang trang login
-                    }
+                    console.log(11);
+                    this.loading = false;
+                    this.$store.commit('clearToken');
+                    this.$store.commit('clearUser');
+                    this.$router.push('login');//chuyen sang trang login   
                 })
         }else{
             this.loading = false;

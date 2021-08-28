@@ -1970,6 +1970,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mixins: [_validateMixin__WEBPACK_IMPORTED_MODULE_0__.validateForm],
@@ -1992,18 +1993,14 @@ __webpack_require__.r(__webpack_exports__);
         if (response) {
           _this.loading = false;
 
-          _this.$router.push('students');
+          _this.$router.push('profile');
         }
       })["catch"](function (err) {
-        if (err.response.status == 401) {
-          _this.$router.push('profile');
-        } else {
-          _this.loading = false;
+        _this.loading = false;
 
-          _this.$store.commit('clearToken');
+        _this.$store.commit('clearToken');
 
-          _this.$store.commit('clearUser');
-        }
+        _this.$store.commit('clearUser');
       });
     } else {
       this.loading = false;
@@ -2242,20 +2239,14 @@ __webpack_require__.r(__webpack_exports__);
           _this.getProfile();
         }
       })["catch"](function (err) {
-        if (err.response.status === 401) {
-          _this.loading = false;
+        _this.loading = false;
 
-          _this.getProfile();
-        } else {
-          _this.loading = false;
+        _this.$store.commit('clearToken');
 
-          _this.$store.commit('clearToken');
+        _this.$store.commit('clearUser');
 
-          _this.$store.commit('clearUser');
+        _this.$router.push('login'); //chuyen sang trang login
 
-          _this.$router.push('login'); //chuyen sang trang login
-
-        }
       });
     } else {
       this.loading = false;
@@ -2379,23 +2370,21 @@ __webpack_require__.r(__webpack_exports__);
         if (response) {
           _this.loading = false;
 
-          _this.getStudent(_this.$route.params.id);
+          if (_this.$authorize('checkRole')) {
+            _this.getStudent(_this.$route.params.id);
+          } else {
+            _this.$router.push('profile');
+          }
         }
       })["catch"](function (err) {
-        console.log(err);
+        _this.loading = false;
 
-        if (err.response.status === 401) {
-          _this.$router.push('profile');
-        } else {
-          _this.loading = false;
+        _this.$store.commit('clearToken');
 
-          _this.$store.commit('clearToken');
+        _this.$store.commit('clearUser');
 
-          _this.$store.commit('clearUser');
+        _this.$router.push('login'); //chuyen sang trang login
 
-          _this.$router.push('login'); //chuyen sang trang login
-
-        }
       });
     } else {
       this.loading = false;
@@ -2588,6 +2577,7 @@ __webpack_require__.r(__webpack_exports__);
   name: "StudentList",
   data: function data() {
     return {
+      isRoleValid: false,
       errors: null,
       loading: true,
       student: {
@@ -2607,31 +2597,37 @@ __webpack_require__.r(__webpack_exports__);
       studentData: {}
     };
   },
-  mounted: function mounted() {
+  created: function created() {
     var _this = this;
+
+    this.$authorize('checkRole').then(function (response) {
+      _this.isRoleValid = response;
+    }); //this.$authorize('checkRole') chỉ return về promise muốn lấy data phải .then()
+  },
+  mounted: function mounted() {
+    var _this2 = this;
 
     if (this.$store.state.token != '') {
       axios.post('/api/checkToken').then(function (response) {
         if (response) {
-          _this.loading = false;
+          _this2.loading = false;
 
-          _this.getAllStudent();
+          if (_this2.isRoleValid == true) {
+            _this2.getAllStudent();
+          } else {
+            _this2.$router.push('profile');
+          }
         }
       })["catch"](function (err) {
-        console.log(err);
+        console.log(11);
+        _this2.loading = false;
 
-        if (err.response.status === 401) {
-          _this.$router.push('profile');
-        } else {
-          _this.loading = false;
+        _this2.$store.commit('clearToken');
 
-          _this.$store.commit('clearToken');
+        _this2.$store.commit('clearUser');
 
-          _this.$store.commit('clearUser');
+        _this2.$router.push('login'); //chuyen sang trang login   
 
-          _this.$router.push('login'); //chuyen sang trang login
-
-        }
       });
     } else {
       this.loading = false;
@@ -2648,35 +2644,35 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     saveStudent: function saveStudent() {
-      var _this2 = this;
-
-      axios.post('/api/students', this.student).then(function (response) {
-        _this2.student.name = '';
-        _this2.student.email = '';
-        _this2.student.phone = '';
-        _this2.student.content = '';
-
-        _this2.getAllStudent();
-      })["catch"](function (err) {
-        _this2.errors = err.response.data.errors;
-      });
-    },
-    editStudent: function editStudent(id) {
       var _this3 = this;
 
-      axios.get('/api/students/' + id).then(function (response) {
-        _this3.oldStudent.id = response.data.student.id;
-        _this3.oldStudent.oldEmail = response.data.student.email;
-        _this3.oldStudent.editName = response.data.student.name;
-        _this3.oldStudent.editEmail = response.data.student.email;
-        _this3.oldStudent.editPhone = response.data.student.phone;
-        _this3.oldStudent.editContent = response.data.student.content;
+      axios.post('/api/students', this.student).then(function (response) {
+        _this3.student.name = '';
+        _this3.student.email = '';
+        _this3.student.phone = '';
+        _this3.student.content = '';
+
+        _this3.getAllStudent();
       })["catch"](function (err) {
         _this3.errors = err.response.data.errors;
       });
     },
-    updateStudent: function updateStudent() {
+    editStudent: function editStudent(id) {
       var _this4 = this;
+
+      axios.get('/api/students/' + id).then(function (response) {
+        _this4.oldStudent.id = response.data.student.id;
+        _this4.oldStudent.oldEmail = response.data.student.email;
+        _this4.oldStudent.editName = response.data.student.name;
+        _this4.oldStudent.editEmail = response.data.student.email;
+        _this4.oldStudent.editPhone = response.data.student.phone;
+        _this4.oldStudent.editContent = response.data.student.content;
+      })["catch"](function (err) {
+        _this4.errors = err.response.data.errors;
+      });
+    },
+    updateStudent: function updateStudent() {
+      var _this5 = this;
 
       var student = {
         name: this.oldStudent.editName,
@@ -2686,22 +2682,22 @@ __webpack_require__.r(__webpack_exports__);
         content: this.oldStudent.editContent
       };
       axios.put('/api/students/' + this.oldStudent.id, student).then(function (response) {
-        _this4.oldStudent.editName = '';
-        _this4.oldStudent.editEmail = '';
-        _this4.oldStudent.editPhone = '';
-        _this4.oldStudent.editContent = '';
+        _this5.oldStudent.editName = '';
+        _this5.oldStudent.editEmail = '';
+        _this5.oldStudent.editPhone = '';
+        _this5.oldStudent.editContent = '';
 
-        _this4.getAllStudent();
+        _this5.getAllStudent();
       })["catch"](function (err) {
-        _this4.errors = err.response.data.errors;
+        _this5.errors = err.response.data.errors;
       });
     },
     deleteStudent: function deleteStudent(id) {
-      var _this5 = this;
+      var _this6 = this;
 
       if (confirm("Bạn muốn xóa không?")) {
         axios["delete"]('/api/students/' + id).then(function (response) {
-          _this5.getAllStudent();
+          _this6.getAllStudent();
 
           alert(response.data.success);
         })["catch"](function (error) {
@@ -2710,25 +2706,25 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     getAllStudent: function getAllStudent() {
-      var _this6 = this;
+      var _this7 = this;
 
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       axios.get('api/students?page=' + page).then(function (response) {
-        _this6.studentData = response.data.students;
+        _this7.studentData = response.data.students;
       })["catch"](function (err) {
         console.log(err.response);
       });
     },
     logout: function logout() {
-      var _this7 = this;
+      var _this8 = this;
 
       axios.post('api/logout').then(function (response) {
         if (response) {
-          _this7.$store.commit('clearToken');
+          _this8.$store.commit('clearToken');
 
-          _this7.$store.commit('clearUser');
+          _this8.$store.commit('clearUser');
 
-          _this7.$router.push('/'); //chuyen sang trang login
+          _this8.$router.push('/'); //chuyen sang trang login
 
         }
       })["catch"](function (err) {
@@ -2748,17 +2744,18 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var _app_App__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app/App */ "./resources/js/app/App.vue");
 /* harmony import */ var _app_routes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./app/routes */ "./resources/js/app/routes.js");
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var _app_store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app/store */ "./resources/js/app/store.js");
 /* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./i18n */ "./resources/js/i18n.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var ckeditor4_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ckeditor4-vue */ "./node_modules/ckeditor4-vue/dist/ckeditor.js");
 /* harmony import */ var ckeditor4_vue__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(ckeditor4_vue__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var vee_validate__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vee-validate */ "./node_modules/vee-validate/dist/vee-validate.esm.js");
+/* harmony import */ var vee_validate__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vee-validate */ "./node_modules/vee-validate/dist/vee-validate.esm.js");
+/* harmony import */ var _authorization_authorize__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./authorization/authorize */ "./resources/js/authorization/authorize.js");
 /* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue-axios */ "./node_modules/vue-axios/dist/vue-axios.es5.js");
 /* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(vue_axios__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var vue_social_auth__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue-social-auth */ "./node_modules/vue-social-auth/dist/vue-social-auth.es2017.js");
@@ -2773,22 +2770,29 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_6__.default.config.productionTip = false;
 
 
-vue__WEBPACK_IMPORTED_MODULE_6__.default.use((ckeditor4_vue__WEBPACK_IMPORTED_MODULE_5___default()));
-vue__WEBPACK_IMPORTED_MODULE_6__.default.use((vue_axios__WEBPACK_IMPORTED_MODULE_7___default()), (axios__WEBPACK_IMPORTED_MODULE_4___default()));
-vue__WEBPACK_IMPORTED_MODULE_6__.default.use(vue_social_auth__WEBPACK_IMPORTED_MODULE_8__.default, {
+
+vue__WEBPACK_IMPORTED_MODULE_9__.default.config.productionTip = false;
+vue__WEBPACK_IMPORTED_MODULE_9__.default.use((ckeditor4_vue__WEBPACK_IMPORTED_MODULE_5___default()));
+vue__WEBPACK_IMPORTED_MODULE_9__.default.use((vue_axios__WEBPACK_IMPORTED_MODULE_7___default()), (axios__WEBPACK_IMPORTED_MODULE_4___default()));
+vue__WEBPACK_IMPORTED_MODULE_9__.default.use(_authorization_authorize__WEBPACK_IMPORTED_MODULE_6__.default);
+vue__WEBPACK_IMPORTED_MODULE_9__.default.use(vue_social_auth__WEBPACK_IMPORTED_MODULE_8__.default, {
   providers: {
     google: {
       clientId: '814023748086-dj8s68mi8c0f3gfm3976hbb4onadtbmg.apps.googleusercontent.com',
       client_secret: 'YUKnOZklJ_3ANi737EDkDgX_',
       redirectUri: 'http://localhost:8000/callback'
+    },
+    facebook: {
+      clientId: '330486362097117',
+      client_secret: '9bd54186e91af7898b69e8e9434fd61e',
+      redirectUri: 'http://localhost:8000/callback/facebook'
     }
   }
 });
-vue__WEBPACK_IMPORTED_MODULE_6__.default.component('ValidationProvider', vee_validate__WEBPACK_IMPORTED_MODULE_9__.ValidationProvider);
-vue__WEBPACK_IMPORTED_MODULE_6__.default.component('ValidationObserver', vee_validate__WEBPACK_IMPORTED_MODULE_9__.ValidationObserver);
+vue__WEBPACK_IMPORTED_MODULE_9__.default.component('ValidationProvider', vee_validate__WEBPACK_IMPORTED_MODULE_10__.ValidationProvider);
+vue__WEBPACK_IMPORTED_MODULE_9__.default.component('ValidationObserver', vee_validate__WEBPACK_IMPORTED_MODULE_10__.ValidationObserver);
 axios__WEBPACK_IMPORTED_MODULE_4___default().interceptors.request.use(function (config) {
   var token = _app_store__WEBPACK_IMPORTED_MODULE_2__.store.state.token;
   var lang = localStorage.getItem('lang') || 'en';
@@ -2803,12 +2807,12 @@ axios__WEBPACK_IMPORTED_MODULE_4___default().interceptors.request.use(function (
 
   return config;
 });
-vue__WEBPACK_IMPORTED_MODULE_6__.default.component('pagination', __webpack_require__(/*! laravel-vue-pagination */ "./node_modules/laravel-vue-pagination/dist/laravel-vue-pagination.common.js"));
-var router = new vue_router__WEBPACK_IMPORTED_MODULE_10__.default({
+vue__WEBPACK_IMPORTED_MODULE_9__.default.component('pagination', __webpack_require__(/*! laravel-vue-pagination */ "./node_modules/laravel-vue-pagination/dist/laravel-vue-pagination.common.js"));
+var router = new vue_router__WEBPACK_IMPORTED_MODULE_11__.default({
   routes: _app_routes__WEBPACK_IMPORTED_MODULE_1__.routes,
   mode: 'history'
 });
-var app = new vue__WEBPACK_IMPORTED_MODULE_6__.default({
+var app = new vue__WEBPACK_IMPORTED_MODULE_9__.default({
   el: '#app',
   i18n: _i18n__WEBPACK_IMPORTED_MODULE_3__.default,
   router: router,
@@ -2986,6 +2990,60 @@ var regPhone = new RegExp(regex.regPhone);
 });
 (0,vee_validate__WEBPACK_IMPORTED_MODULE_1__.extend)("min", vee_validate_dist_rules__WEBPACK_IMPORTED_MODULE_2__.min);
 (0,vee_validate__WEBPACK_IMPORTED_MODULE_1__.extend)("max", vee_validate_dist_rules__WEBPACK_IMPORTED_MODULE_2__.max);
+
+/***/ }),
+
+/***/ "./resources/js/authorization/authorize.js":
+/*!*************************************************!*\
+  !*** ./resources/js/authorization/authorize.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _policies__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./policies */ "./resources/js/authorization/policies.js");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  install: function install(Vue, options) {
+    Vue.prototype.$authorize = function (policy) {
+      if (typeof policy === 'string') {
+        return _policies__WEBPACK_IMPORTED_MODULE_0__.default[policy](); //tuong ung voi authorize(modify,answer) hoac policies.modify(ussr,model)
+      }
+    };
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/authorization/policies.js":
+/*!************************************************!*\
+  !*** ./resources/js/authorization/policies.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  checkRole: function checkRole() {
+    return axios.post('/api/getRole').then(function (res) {
+      var roles = res.data.roles;
+
+      if (roles.includes('Admin')) {
+        return true;
+      } else {
+        return false;
+      }
+    })["catch"](function (err) {
+      return false;
+    });
+  }
+});
 
 /***/ }),
 
@@ -45673,6 +45731,20 @@ var render = function() {
                         on: {
                           click: function($event) {
                             return _vm.authProvider("google")
+                          }
+                        }
+                      },
+                      [_vm._v("Dang nhap bang google")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary mt-2",
+                        attrs: { type: "submit" },
+                        on: {
+                          click: function($event) {
+                            return _vm.authProvider("facebook")
                           }
                         }
                       },

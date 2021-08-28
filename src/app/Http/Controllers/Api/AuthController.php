@@ -32,6 +32,14 @@ class AuthController extends Controller
     public function userProfile(){
         return response()->json(["user"=>auth()->user()],200);
     }
+    public function getRoles(){
+        $user = User::find(auth()->id());
+        $_roles = array();
+        foreach($user->roles as $role){
+            $_roles[] =  $role->name;
+        };
+        return response()->json(['roles'=>$_roles]);
+    }
     public function update(UpdateProfileRequest $request){
         $user = User::find(auth()->id());
         $img = $request->file('file');
@@ -47,20 +55,10 @@ class AuthController extends Controller
         auth()->logout();
         return response()->json(['success'=>true],200);
     }
-    /**
-  * Redirect the user to the Google authentication page.
-  *
-    * @return \Illuminate\Http\Response
-    */
     public function redirectToProvider()
     {
         return Socialite::driver('google')->redirect();
     }
-    /**
-     * Obtain the user information from Google.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function handleProviderCallback($provider)
     {
         $user = Socialite::driver($provider)->stateless()->user();

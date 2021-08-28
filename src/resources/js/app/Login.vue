@@ -32,7 +32,8 @@
                                     <button type="submit" class="btn btn-primary">{{ $t('messages.Login') }}</button>
                                 </form>
                              </ValidationObserver>
-                             <button type="submit" class="btn btn-primary mt-2" @click="authProvider('google')">Dang nhap bang facebook</button>
+                             <button type="submit" class="btn btn-primary mt-2" @click="authProvider('google')">Dang nhap bang google</button>
+                             <button type="submit" class="btn btn-primary mt-2" @click="authProvider('facebook')">Dang nhap bang facebook</button>
                         </div>
                     </div>
                 </div>
@@ -61,20 +62,16 @@ export default {
                 .then(response=>{
                     if(response){
                         this.loading = false;
-                        this.$router.push('students');
+                        this.$router.push('profile');
                     }
                 })
                 .catch(err=>{
-                    if(err.response.status == 401){
-                        this.$router.push('profile');
-                    }else{
-                        this.loading = false;
-                        this.$store.commit('clearToken');
-                        this.$store.commit('clearUser');    
-                    }
+                    this.loading = false;
+                    this.$store.commit('clearToken');
+                    this.$store.commit('clearUser');                  
                 })
         }else{
-            this.loading = false
+            this.loading = false;
         }
     },
     methods : {

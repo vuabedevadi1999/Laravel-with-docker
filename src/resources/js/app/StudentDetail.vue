@@ -36,19 +36,18 @@ export default {
                 .then(response=>{
                     if(response){
                         this.loading = false;
-                        this.getStudent(this.$route.params.id);
+                        if(this.$authorize('checkRole')){
+                            this.getStudent(this.$route.params.id);
+                        }else{
+                            this.$router.push('profile')
+                        }
                     }
                 })
                 .catch(err=>{
-                    console.log(err)
-                    if(err.response.status === 401){
-                        this.$router.push('profile')
-                    }else{
-                        this.loading = false;
-                        this.$store.commit('clearToken');
-                        this.$store.commit('clearUser');
-                        this.$router.push('login');//chuyen sang trang login
-                    }
+                    this.loading = false;
+                    this.$store.commit('clearToken');
+                    this.$store.commit('clearUser');
+                    this.$router.push('login');//chuyen sang trang login
                 })
         }else{
             this.loading = false;

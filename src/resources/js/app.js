@@ -9,17 +9,24 @@ import i18n from './i18n';
 import axios from 'axios';
 import CKEditor  from "ckeditor4-vue";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
-Vue.config.productionTip = false;
+import Authorization from './authorization/authorize';
 import VueAxios from 'vue-axios'
 import VueSocialauth from 'vue-social-auth'
+Vue.config.productionTip = false;
 Vue.use(CKEditor);
 Vue.use(VueAxios, axios);
+Vue.use(Authorization);
 Vue.use(VueSocialauth, {
     providers: {
         google: {
             clientId: '814023748086-dj8s68mi8c0f3gfm3976hbb4onadtbmg.apps.googleusercontent.com',
             client_secret: 'YUKnOZklJ_3ANi737EDkDgX_',
             redirectUri: 'http://localhost:8000/callback'
+        },
+        facebook: {
+            clientId: '330486362097117',
+            client_secret: '9bd54186e91af7898b69e8e9434fd61e',
+            redirectUri: 'http://localhost:8000/callback/facebook'
         }
     }
 });

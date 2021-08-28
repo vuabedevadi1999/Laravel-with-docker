@@ -169,15 +169,10 @@ export default {
                     }
                 })
                 .catch(err=>{
-                    if(err.response.status === 401){
-                        this.loading = false;
-                        this.getProfile();
-                    }else{
-                        this.loading = false;
-                        this.$store.commit('clearToken');
-                        this.$store.commit('clearUser');
-                        this.$router.push('login');//chuyen sang trang login
-                    }
+                    this.loading = false;
+                    this.$store.commit('clearToken');
+                    this.$store.commit('clearUser');
+                    this.$router.push('login');//chuyen sang trang login
                 })
         }else{
             this.loading = false;
