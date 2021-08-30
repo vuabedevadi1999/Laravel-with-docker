@@ -10,9 +10,13 @@ import axios from 'axios';
 import CKEditor  from "ckeditor4-vue";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
 import Authorization from './authorization/authorize';
+import VCalendar from 'v-calendar';
 import VueAxios from 'vue-axios'
 import VueSocialauth from 'vue-social-auth'
 Vue.config.productionTip = false;
+Vue.use(VCalendar, {
+    componentPrefix: 'vc',
+});
 Vue.use(CKEditor);
 Vue.use(VueAxios, axios);
 Vue.use(Authorization);

@@ -11,7 +11,11 @@ export const validateForm = {
                 rulePasswordConfirm:'required|min:6|max:12|confirmed:profile.newPassword',
                 rulePhone:'required|phone',
                 ruleImage:'required|image'
-            }
+            },
+            modelConfig: {
+                type: 'string',
+                mask: 'YYYY-MM-DD', // Uses 'iso' if missing
+            },
         }
     },
     methods:{

@@ -17,7 +17,8 @@ export default new VueI18n({
                 password: "Mật khẩu",
                 phone:"Số điện thoại",
                 avatar: "Ảnh đại diện",
-                content:"Nội dung"
+                content:"Nội dung",
+                birthday:"Ngày sinh"
             },
             validation: vi.messages,
             messages:vi.messages
@@ -29,7 +30,8 @@ export default new VueI18n({
                 password: "password",
                 phone:"phone",
                 avatar: "avatar",
-                content: "content"
+                content: "content",
+                birthday: "birthday"
             },
             validation: en.messages,
             messages: en.messages

@@ -29,6 +29,7 @@
 
         "delete student?":"Bạn có muốn xóa sinh viên này không?",
         "back":"Trở về",
+        "Birthday":"Ngày sinh",
         "View":"Xem",
         "Content":"Nội dung", 
         "Home":"Trang chủ",
@@ -52,6 +53,7 @@
         "Edit Student": "Chỉnh sửa sinh viên",
         "Edit": "Sửa",
         "Delete": "Xóa",
-        "Submit": "Gửi"
+        "Submit": "Gửi",
+        "Not update": "Chưa cập nhập"
     }
 }

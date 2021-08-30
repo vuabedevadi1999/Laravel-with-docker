@@ -53,6 +53,7 @@ class UpdateProfileRequest extends FormRequest
             'file' => 'required|image|mimes:jpeg,png,jpg|mimetypes:image/jpeg,image/png|max:10000',
             'email' => 'required|email|unique:users,email,'.$id,
             'oldPassword' => 'required|max:12|min:6|password',
+            'birthday' => "required|date_format:Y-m-d|before:today", 
             'password' => 'required|max:12|min:6|different:oldPassword|confirmed',
             'password_confirmation' => 'required|max:12|min:6'
         ];

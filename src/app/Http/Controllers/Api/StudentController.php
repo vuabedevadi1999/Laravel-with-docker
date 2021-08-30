@@ -5,14 +5,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
-use App\Jobs\SendMailAddStudentJob;
 use App\Models\Student;
-use App\Models\User;
+use App\Services\Student\StudentServiceInterface;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
+    protected $studentService;
+    public function __construct(StudentServiceInterface $studentService)
+    {
+        $this->studentService = $studentService;   
+    }
     /**
      * Display a listing of the resource.
      *
@@ -22,8 +25,8 @@ class StudentController extends Controller
     {
         $response = Gate::inspect('viewAny',Student::class);
         if($response->allowed()){
-            $students = Student::orderBy('created_at','desc')->paginate(5);
-            return response()->json(['students'=>$students],200);
+            $result = $this->studentService->paginate(5);
+            return response()->json(['students'=>$result],200);
         }else{
             return response()->json(["success"=>$response->message()],401);
         }
@@ -39,15 +42,8 @@ class StudentController extends Controller
     {
         $response = Gate::inspect('create',Student::class);
         if($response->allowed()){
-            $student = Student::create($request->only(['name','email','phone','content']));
-            $user = User::create([
-                'name' => $student->name,
-                'email' => $student->email,
-                'password' => Hash::make('123456789'),
-                'avatar' => 'avatar-default.png'
-            ]);
-            dispatch(new SendMailAddStudentJob($student,$user));
-            return response()->json(['success'=> __('message.CreatedStudent')],201);
+            $result = $this->studentService->store($request);
+            return response()->json(['success' => __('message.CreatedStudent'),"data" => $result],201);
         }else{
             return response()->json(['success' => $response->message()],401);
         }
@@ -63,8 +59,8 @@ class StudentController extends Controller
     {
         $response = Gate::inspect('view',$student);
         if($response->allowed()){
-            $student = Student::find($student->id);
-            return response()->json(['student'=>$student],200);
+            $result = $this->studentService->show($student);
+            return response()->json(['student'=>$result],200);
         }else{
             return response()->json(['success' => $response->message()],401);
         }
@@ -81,12 +77,8 @@ class StudentController extends Controller
     {
         $response = Gate::inspect('update',$student);
         if($response->allowed()){
-            $student->update($request->only(['name','email','phone','content']));
-            $user = User::where('email',$request->oldEmail)->first();
-            $user->update(['email'=>$request->email]);
-            $newUser = User::where('email',$request->email)->first();
-            dispatch(new SendMailAddStudentJob($student,$newUser));
-            return response()->json(['success' => __('message.UpdatedStudent')]);
+            $result = $this->studentService->update($request, $student);
+            return response()->json(['success' => __('message.UpdatedStudent'),"data" => $result]);
         }else{
             return response()->json(['success' => $response->message()],401);
         }
@@ -102,10 +94,8 @@ class StudentController extends Controller
     {
         $response = Gate::inspect('delete',$student);
         if($response->allowed()){
-            $student->delete();
-            $user = User::where('email',$student->email)->first();
-            User::destroy($user->id);
-            return response()->json(['success' => __('message.DeletedStudent').$student->id]);
+            $result = $this->studentService->destroy($student);
+            return response()->json(['success' => __('message.DeletedStudent').$result->id]);
         }else{
             return response()->json(['success' => $response->message()],401);
         }

@@ -21,7 +21,7 @@
                                 {{ profile.name }}
                             </h5>
                             <h6>
-                                {{ profile.job ? profile.job : 'Đang cập nhập' }}
+                                {{ profile.job ? profile.job : $t('messages.Not update') }}
                             </h6>
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item">
@@ -58,6 +58,20 @@
                                                 <span class="invalid-feedback">{{ errors[0] }}</span>
                                                 <span v-if="hasError('file')" class="invalid-feedback">{{ firstError('file') }}</span>
                                             </div>
+                                        </ValidationProvider>
+                                        <ValidationProvider name="birthday" :rules="validationRules.ruleRequired" v-slot="{ errors }">
+                                            <vc-date-picker v-model="profile.birthday" :model-config="modelConfig" v-slot="{ inputEvents }">
+                                                <div class="form-group">
+                                                    <label for="avatar">{{ $t('messages.Birthday') }}</label>
+                                                    <input
+                                                    class="form-control px-2 py-1 border rounded focus:outline-none focus:border-blue-300"
+                                                    :value="profile.birthday" placeholder="Please choose your birthday"
+                                                    v-on="inputEvents"
+                                                    />
+                                                    <span class="invalid-feedback">{{ errors[0] }}</span>
+                                                    <span v-if="hasError('birthday')" class="invalid-feedback">{{ firstError('birthday') }}</span>
+                                                </div>
+                                            </vc-date-picker>
                                         </ValidationProvider>
                                         <ValidationProvider name="email" :rules="validationRules.ruleEmail"  v-slot="{ errors }">
                                             <div class="form-group">
@@ -129,6 +143,14 @@
                                         <p>{{ profile.email }}</p>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>{{ $t('messages.Birthday') }}</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p>{{ profile.birthday || $t('messages.Not update') }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -151,6 +173,7 @@ export default {
                 email:'',
                 file: '',
                 avatar:'',
+                birthday: null,
                 avatar_type:null,
                 job:'',
                 oldPassword:'',
@@ -190,6 +213,7 @@ export default {
                         this.profile.id = response.data.user.id
                         this.profile.name = response.data.user.name
                         this.profile.avatar = response.data.user.avatar
+                        this.profile.birthday = response.data.user.birthday
                         this.profile.avatar_type = response.data.user.avatar_type
                         this.profile.job = response.data.user.job
                         this.profile.email = response.data.user.email
@@ -208,6 +232,7 @@ export default {
             formData.append('file',this.profile.file);
             formData.append('oldPassword',this.profile.oldPassword);
             formData.append('password',this.profile.newPassword);
+            formData.append('birthday',this.profile.birthday);
             formData.append('password_confirmation',this.profile.passwordConfirm);
             axios.post('api/update-profile',formData)
                 .then(response=>{
