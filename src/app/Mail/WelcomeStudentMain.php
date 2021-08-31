@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -19,7 +20,7 @@ class WelcomeStudentMain extends Mailable
      */
     public $student;
     public $user;
-    public function __construct(Student $student,$user)
+    public function __construct(Student $student,User $user)
     {
         $this->student = $student;
         $this->user = $user;

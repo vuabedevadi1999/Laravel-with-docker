@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Mail\WelcomeStudentMain;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,7 +24,7 @@ class SendMailAddStudentJob implements ShouldQueue
      */
     protected $student;
     protected $user;
-    public function __construct(Student $student,$user)
+    public function __construct(Student $student,User $user)
     {
         $this->student = $student;
         $this->user = $user;

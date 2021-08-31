@@ -49,15 +49,18 @@ class AuthService implements AuthServiceInterface{
         $newImage = date('Ymd').'_'.rand(100000,999999).'.'.$img->getClientOriginalExtension();
         $destinationPath = 'public/images';
         $img->move($destinationPath,$newImage);
-        $user->update([
+        $attributes = [
             'name'=> $request->name,
             'email'=> $request->email,
             'avatar' => $newImage,
             'birthday' => $request->birthday,
             'password'=> Hash::make($request->password)
-        ]);
-        auth()->logout();
-        return true;
+        ];
+        if($this->authRepository->update($user,$attributes)){
+            auth()->logout();
+            return true;
+        }
+        return false;
     }
     public function handleProviderCallback($provider)
     {
@@ -68,15 +71,16 @@ class AuthService implements AuthServiceInterface{
             $token = JWTAuth::fromUser($existingUser);
             return [$token, $existingUser];
         } else {
-            $newUser = new User;
-            $newUser->name = $user->name;
-            $newUser->email = $user->email;
-            $newUser->google_id = $user->id;
-            $newUser->avatar = $user->avatar;
-            $newUser->avatar_type = 1;
-            $newUser->save();
+            $attributes = [
+                'name'=> $user->name,
+                'email'=> $user->email,
+                'google_id' => $user->id,
+                'avatar' => $user->avatar,
+                'avatar_type'=> 1
+            ];
+            $newUser = $this->authRepository->create($attributes);
             $roleStudent = $this->authRepository->findRoleStudentByName('Student');
-            $newUser->roles()->attach($roleStudent->id);
+            $this->authRepository->attachRole($newUser,$roleStudent->id);
             $token = auth()->login($newUser, true);
             $token = JWTAuth::fromUser($newUser);
             return [$token,$newUser];

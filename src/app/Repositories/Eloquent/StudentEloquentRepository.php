@@ -27,4 +27,10 @@ class StudentEloquentRepository implements StudentRepositoryInterface {
         User::destroy($user->id);
         return $student;
     }
+    public function create(array $attributes){
+        return Student::create($attributes);
+    }
+    public function update(Student $student, array $attributes){
+        return $student->update($attributes);
+    }
 }

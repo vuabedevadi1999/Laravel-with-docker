@@ -24,4 +24,13 @@ class AuthEloquentRepository implements AuthRepositoryInterface
     public function findRoleStudentByName($name){
         return Role::where('name',$name)->first();
     }
+    public function create($attributes){
+        return User::create($attributes);
+    }
+    public function update(User $user, $attributes){
+        return $user->update($attributes);
+    }
+    public function attachRole(User $user,$roleId){
+        return $user->roles()->attach($roleId);
+    }
 }
