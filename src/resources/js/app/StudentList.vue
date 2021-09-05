@@ -9,6 +9,8 @@
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createStudent">
             {{ $t('messages.Create a new student') }}
             </button>
+            <button class="btn btn-outline-primary" 
+            v-on:click="$toast.success('Welcome!', 'Hey')">Show</button>&nbsp;
             <!-- Modal create student-->
             <div class="modal fade" data-focus="false" id="createStudent" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -155,6 +157,7 @@
 </template>
 <script>
 import { validateForm } from './validateMixin';
+import { mapGetters } from 'vuex';
 export default {
     mixins:[validateForm],
     name: "StudentList",
@@ -180,36 +183,16 @@ export default {
             studentData:{}
         }
     },
-    created(){
-        this.$authorize('checkRole').then(response => {
-             this.isRoleValid = response;
-        });
-        //this.$authorize('checkRole') chỉ return về promise muốn lấy data phải .then()
+    computed: {
+        ...mapGetters({
+            getToken:'auth/getToken',
+            getRoles:'auth/getRoles',
+            authenticated:'auth/authenticated'
+        })
     },
     mounted(){
-        if(this.$store.state.token != ''){
-            axios.post('/api/checkToken')
-                .then(response=>{
-                    if(response){
-                        this.loading = false;
-                        if(this.isRoleValid == true){
-                            this.getAllStudent();
-                        }else{
-                            this.$router.push('profile')
-                        }
-                    }
-                })
-                .catch(err=>{
-                    console.log(11);
-                    this.loading = false;
-                    this.$store.commit('clearToken');
-                    this.$store.commit('clearUser');
-                    this.$router.push('login');//chuyen sang trang login   
-                })
-        }else{
-            this.loading = false;
-            this.$router.push('login');//chuyen sang trang login
-        }
+        this.loading = false;
+        this.getAllStudent();
     },
     methods:{
         viewDetail(id){
@@ -228,6 +211,7 @@ export default {
                     this.student.email = ''
                     this.student.phone = ''
                     this.student.content = ''
+                    this.$toast.success(response.data.message)
                     this.getAllStudent();
                 })
                 .catch(err=>{
@@ -261,11 +245,13 @@ export default {
                     this.oldStudent.editName = ''
                     this.oldStudent.editEmail = ''
                     this.oldStudent.editPhone = ''
-                     this.oldStudent.editContent = ''
+                    this.oldStudent.editContent = ''
+                    this.$toast.success(response.data.message)
                     this.getAllStudent();
                 })
                 .catch(err => {
                     this.errors = err.response.data.errors;
+                    this.$toast.error(err.response.data.message);
                 })
         },
         deleteStudent(id){
@@ -273,9 +259,11 @@ export default {
                 axios.delete('/api/students/'+ id)
                     .then(response => {
                         this.getAllStudent();
-                        alert(response.data.success)
+                        this.$toast.success(response.data.message)
                 })
-                .catch(error => console.log(error))
+                .catch(error => {
+                    this.$toast.error(error.response.data.message);
+                })
             }
         },
         getAllStudent(page = 1){
@@ -284,21 +272,19 @@ export default {
                     this.studentData = response.data.students;
                 })
                 .catch(err => {
-                    console.log(err.response);
+                    this.$toast.error(err.response.data.message, 'Error')
                 })
         },
         logout(){
-            axios.post('api/logout')
-                .then(response=>{
-                    if(response){
-                        this.$store.commit('clearToken');
-                        this.$store.commit('clearUser');
-                        this.$router.push('/');//chuyen sang trang login
-                    }
-                })
-                .catch(err=>{
-                    console.log("lỖI")
-                })
+            this.$store.dispatch('auth/logout').then(() => {
+                this.$router.push('/')
+                    .catch(err => {
+                        
+                    })
+            })
+            .catch(err=>{
+                console.log(err);
+            })
         }
     }
 }

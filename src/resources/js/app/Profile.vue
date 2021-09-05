@@ -160,6 +160,7 @@
 </template>
 <script>
 import { validateForm } from './validateMixin';
+import { mapGetters } from 'vuex';
 export default {
     mixins:[validateForm],
     name: "Profile",
@@ -182,48 +183,37 @@ export default {
             },
         }
     },
+    computed: {
+        ...mapGetters({
+            getToken:'auth/getToken',
+            authenticated:'auth/authenticated'
+        })
+    },
     mounted(){
-        if(this.$store.state.token != ''){
-            axios.post('/api/checkToken')
-                .then(response=>{
-                    if(response){
-                        this.loading = false;
-                        this.getProfile();
-                    }
-                })
-                .catch(err=>{
-                    this.loading = false;
-                    this.$store.commit('clearToken');
-                    this.$store.commit('clearUser');
-                    this.$router.push('login');//chuyen sang trang login
-                })
-        }else{
-            this.loading = false;
-            this.$router.push('login');//chuyen sang trang login
-        }
+        this.loading = false;
+        this.getProfile();
     },
     methods:{
         handleFileUpload(){
             this.profile.file = this.$refs.file.files[0];
         },
         getProfile(){
-            axios.post('api/profile')
-                .then(response=>{
-                    if(response){
-                        this.profile.id = response.data.user.id
-                        this.profile.name = response.data.user.name
-                        this.profile.avatar = response.data.user.avatar
-                        this.profile.birthday = response.data.user.birthday
-                        this.profile.avatar_type = response.data.user.avatar_type
-                        this.profile.job = response.data.user.job
-                        this.profile.email = response.data.user.email
-                    }
-                })
-                .catch(err=>{
-                    this.$store.commit('clearToken');
-                    this.$store.commit('clearUser');
-                    this.$router.push('login')
-                })
+            this.$store.dispatch('auth/userInfo')
+            .then((data) => {
+                if(data.success){
+                    this.profile.id = data.user.id
+                    this.profile.name = data.user.name
+                    this.profile.avatar = data.user.avatar
+                    this.profile.birthday = data.user.birthday
+                    this.profile.avatar_type = data.user.avatar_type
+                    this.profile.job = data.user.job
+                    this.profile.email = data.user.email
+                }
+            })
+            .catch(err => {
+                this.$store.dispatch('auth/clearTokenAndUser');
+                this.$router.push('login')
+            })
         },
         updateProfile(){
             var formData = new FormData();
@@ -237,8 +227,7 @@ export default {
             axios.post('api/update-profile',formData)
                 .then(response=>{
                     this.loading = false;
-                    this.$store.commit('clearToken');
-                    this.$store.commit('clearUser');
+                    this.$store.dispatch('auth/clearTokenAndUser');
                     this.$router.push('login');
                 })
                 .catch(err=>{
@@ -246,17 +235,15 @@ export default {
                 })
         },
         logout(){
-            axios.post('api/logout')
-                .then(response=>{
-                    if(response){
-                        this.$store.commit('clearToken');
-                        this.$store.commit('clearUser');
-                        this.$router.push('/');//chuyen sang trang login
-                    }
-                })
-                .catch(err=>{
-                    console.log("lỖI")
-                })
+            this.$store.dispatch('auth/logout').then(() => {
+                this.$router.push('/')
+                    .catch(err => {
+                        
+                    })
+            })
+            .catch(err=>{
+                console.log(err);
+            })
         }
     }
 }

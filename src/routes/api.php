@@ -26,7 +26,7 @@ Route::group(['middleware' => ['auth:api']],function(){
     Route::post('/profile', [AuthController::class, 'userProfile']);
     Route::post('/update-profile', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/getRole', [AuthController::class, 'getRoles']);
+    Route::post('/getRole', [AuthController::class, 'getRolesAndPermission']);
     Route::post('/checkToken', [AuthController::class, 'checkToken']);
 });
 Route::group(['middleware' => ['auth:api','RoleIsValid']],function(){

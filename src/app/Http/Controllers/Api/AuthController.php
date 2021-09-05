@@ -17,7 +17,19 @@ class AuthController extends Controller
     public function login(LoginAuthRequest $request){
         $result = $this->authService->login($request);
         if($result){
-            return response()->json(['success'=>true,'token'=>$result[0],'user'=>$result[1]],200);
+            $roleAndPermission = $this->authService->getRolesAndPermission();
+            return response()->json([
+                'success' => true,
+                'token' => $result[0],
+                'user' => $result[1],
+                'roles' => $roleAndPermission[0],
+                'permissions' => $roleAndPermission[1]
+            ],200);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => __('message.LoginFailure')
+            ],401);
         }
     }
     public function checkToken(){
@@ -34,14 +46,23 @@ class AuthController extends Controller
     }
     public function userProfile(){
         $result = $this->authService->userProfile();
+        $roleAndPermission = $this->authService->getRolesAndPermission();
         if($result){
-            return response()->json(['user' => $result],200);
+            return response()->json([
+                'success' => true,
+                'user' => $result,
+                'roles' => $roleAndPermission[0],
+                'permissions' => $roleAndPermission[1]
+            ],200);
         }
     }
-    public function getRoles(){
-        $result = $this->authService->getRoles();
+    public function getRolesAndPermission(){
+        $result = $this->authService->getRolesAndPermission();
         if($result){
-            return response()->json(['roles' => $result],200);
+            return response()->json([
+                'roles' => $result[0],
+                'permissions' => $result[1]
+            ],200);
         }
     }
     public function update(UpdateProfileRequest $request){

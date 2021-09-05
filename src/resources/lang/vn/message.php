@@ -9,6 +9,7 @@ return [
     'UnauthorizedDeleteStd' => 'Bạn không có quyền xóa sinh viên',
     'UnauthorizedViewStd' => 'Bạn không có quyền xem sinh viên',
     'UnautorizedAccess' => 'Bạn không có quyền truy cập',
-    'UnauthorizedRestoreStd' => 'Bạn không có quyền khôi phục'
+    'UnauthorizedRestoreStd' => 'Bạn không có quyền khôi phục',
+    "LoginFailure" => "Tài khoản hoặc mật khẩu không chính xác"
 
 ];

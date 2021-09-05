@@ -9,7 +9,7 @@ interface AuthServiceInterface {
     public function checkToken();
     public function logout();
     public function userProfile();
-    public function getRoles();
+    public function getRolesAndPermission();
     public function update(UpdateProfileRequest $request);
     public function handleProviderCallback($provider);
 }

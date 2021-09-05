@@ -23,6 +23,7 @@
     </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 export default {
     data(){
         return {
@@ -30,29 +31,16 @@ export default {
             student:{}
         }
     },
+    computed: {
+        ...mapGetters({
+            getToken:'auth/getToken',
+            getRoles:'auth/getRoles',
+            authenticated:'auth/authenticated'
+        })
+    },
     mounted(){
-        if(this.$store.state.token != ''){
-            axios.post('/api/checkToken')
-                .then(response=>{
-                    if(response){
-                        this.loading = false;
-                        if(this.$authorize('checkRole')){
-                            this.getStudent(this.$route.params.id);
-                        }else{
-                            this.$router.push('profile')
-                        }
-                    }
-                })
-                .catch(err=>{
-                    this.loading = false;
-                    this.$store.commit('clearToken');
-                    this.$store.commit('clearUser');
-                    this.$router.push('login');//chuyen sang trang login
-                })
-        }else{
-            this.loading = false;
-            this.$router.push('login');//chuyen sang trang login
-        }
+        this.loading = false;
+        this.getStudent(this.$route.params.id);
     },
     methods:{
         getStudent(id){

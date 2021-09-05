@@ -35,13 +35,11 @@ class AuthService implements AuthServiceInterface{
     public function userProfile(){
         return auth()->user();
     }
-    public function getRoles(){
+    public function getRolesAndPermission(){
         $user = $this->authRepository->findById(auth()->id());
-        $roles = array();
-        foreach($user->roles as $role){
-            $roles[] =  $role->name;
-        };
-        return $roles;
+        $roles = $user->roles->pluck('name');
+        $permissions = $user->getAllPermissions()->pluck('name');
+        return [$roles,$permissions];
     }
     public function update(UpdateProfileRequest $request){
         $user = $this->authRepository->findById(auth()->id());

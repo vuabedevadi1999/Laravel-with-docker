@@ -19,10 +19,8 @@ class StudentPolicy
      */
     public function viewAny(User $user)
     {
-        foreach($user->roles as $role){
-            if($role->name === 'Admin'){
-                return Response::allow();
-            }
+        if($user->hasPermissionTo("view students")){
+            return Response::allow();
         }
         return Response::deny(__('message.UnauthorizedViewStd'),401);
     }
@@ -36,10 +34,8 @@ class StudentPolicy
      */
     public function view(User $user, Student $student)
     {
-        foreach($user->roles as $role){
-            if($role->name === 'Admin'){
-                return Response::allow();
-            }
+        if($user->hasPermissionTo("view students")){
+            return Response::allow();
         }
         return Response::deny(__('message.UnauthorizedViewStd'),401);
     }
@@ -52,10 +48,8 @@ class StudentPolicy
      */
     public function create(User $user)
     {
-        foreach($user->roles as $role){
-            if($role->name === 'Admin'){
-                return Response::allow();
-            }
+        if($user->hasPermissionTo("create students")){
+            return Response::allow();
         }
         return Response::deny(__('message.UnauthorizedCreateStd'),401);
     }
@@ -69,10 +63,8 @@ class StudentPolicy
      */
     public function update(User $user, Student $student)
     {
-        foreach($user->roles as $role){
-            if($role->name === 'Admin'){
-                return Response::allow();
-            }
+        if($user->hasPermissionTo("edit students")){
+            return Response::allow();
         }
         return Response::deny(__('message.UnauthorizedUpdateStd'),401);
     }
@@ -86,10 +78,8 @@ class StudentPolicy
      */
     public function delete(User $user, Student $student)
     {
-        foreach($user->roles as $role){
-            if($role->name === 'Admin'){
-                return Response::allow();
-            }
+        if($user->hasPermissionTo("delete students")){
+            return Response::allow();
         }
         return Response::deny(__('message.UnauthorizedDeleteStd'),401);
     }
@@ -103,10 +93,8 @@ class StudentPolicy
      */
     public function restore(User $user, Student $student)
     {
-        foreach($user->roles as $role){
-            if($role->name === 'Admin'){
-                return Response::allow();
-            }
+        if($user->hasRole("admin")){
+            return Response::allow();
         }
         return Response::deny(__('message.UnauthorizedRestoreStd'),401);
     }
@@ -120,10 +108,8 @@ class StudentPolicy
      */
     public function forceDelete(User $user, Student $student)
     {
-        foreach($user->roles as $role){
-            if($role->name === 'Admin'){
-                return Response::allow();
-            }
+        if($user->hasPermissionTo("delete students")){
+            return Response::allow();
         }
         return Response::deny(__('message.UnauthorizedDeleteStd'),401);
     }

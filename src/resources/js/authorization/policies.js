@@ -1,17 +1,13 @@
 export default {
-    checkRole(){
-        return axios.post('/api/getRole')
-            .then(res => {
-                let roles =  res.data.roles;
-                if(roles.includes('Admin')){
-                    return true;
-                }else{
-                    return false;
-                }
-            })
-            .catch(err => {
-                return false;
-
-            })
-    }
+    isLogged(){
+        
+    },
+    isRole(roles){
+        if(roles){
+            if(roles.includes('admin') || roles.includes('editor') || roles.includes('manager')){
+                return true;
+            }else return false;
+        }
+        return false;
+    },
 }

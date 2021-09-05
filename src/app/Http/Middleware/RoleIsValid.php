@@ -16,10 +16,8 @@ class RoleIsValid
      */
     public function handle(Request $request, Closure $next)
     {
-        foreach(auth()->user()->roles as $role){
-            if($role->name === 'Admin'){
-                return $next($request);
-            }
+        if(auth()->user()->hasRole(['admin','editor','manager'])){
+            return $next($request);
         }
         return response()->json(['success' => __('message.UnautorizedAccess')],401);
     }

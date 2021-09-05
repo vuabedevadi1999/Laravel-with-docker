@@ -29,7 +29,12 @@
                                             <span v-if="hasError('password')" class="invalid-feedback">{{ firstError('password') }}</span>
                                         </div>
                                     </ValidationProvider>
-                                    <button type="submit" class="btn btn-primary">{{ $t('messages.Login') }}</button>
+                                    <button type="submit" class="btn btn-primary">
+                                    <div v-if="loadingLogin" class="spinner-border spinner-border-sm" role="status">
+                                        
+                                    </div>
+                                    {{ $t('messages.Login') }}
+                                    </button>
                                 </form>
                              </ValidationObserver>
                              <button type="submit" class="btn btn-primary mt-2" @click="authProvider('google')">Dang nhap bang google</button>
@@ -43,6 +48,7 @@
 </template>
 <script>
 import { validateForm } from './validateMixin';
+import { mapGetters } from 'vuex';
 export default {
     mixins:[validateForm],
     name: "Login",
@@ -53,26 +59,20 @@ export default {
                 email: '',
                 password: '',
             },
+            loadingLogin:false,
             loading: true,
         }
     },
+    computed: {
+        ...mapGetters({
+                getToken: 'auth/getToken',
+                getRoles: 'auth/getRoles',
+                authenticated: 'auth/authenticated',
+                getPermissions: 'auth/getPermissions',
+            })
+    },
     mounted(){
-        if(this.$store.state.token != ''){
-            axios.post('/api/checkToken')
-                .then(response=>{
-                    if(response){
-                        this.loading = false;
-                        this.$router.push('profile');
-                    }
-                })
-                .catch(err=>{
-                    this.loading = false;
-                    this.$store.commit('clearToken');
-                    this.$store.commit('clearUser');                  
-                })
-        }else{
-            this.loading = false;
-        }
+        this.loading = false;
     },
     methods : {
         authProvider(provider) {
@@ -92,22 +92,29 @@ export default {
                 }
             }).catch(err => {
                 this.errors = err.response.data.errors;
-                console.log({err:err})
             })
         },
-        login(){
-            //call api
-            axios.post('api/login',this.credentials)
-            .then(response=>{
-                if(response.data.success){
-                    this.$store.commit('setToken',response.data.token)
-                    this.$store.commit('setUser',response.data.user)
-                    this.$router.push('students');
-                }
-            })
-            .catch(err=>{
-                this.errors = err.response.data.errors;
-            })
+        async login(){
+            try{
+                this.loadingLogin = true;
+                this.$store.dispatch('auth/login',this.credentials)
+                    .then((data) => {
+                        if(data.success){
+                            this.loadingLogin = false;
+                            this.$router.push({
+                                name:'students'
+                            }).catch(err => {
+                                
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        this.loadingLogin = false;
+                        this.$toast.error(err.response.data.message);
+                    })
+            }catch(error){
+                console.log(error)
+            }
         }
     }
 }

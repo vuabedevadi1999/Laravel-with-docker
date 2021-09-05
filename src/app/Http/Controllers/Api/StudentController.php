@@ -28,7 +28,10 @@ class StudentController extends Controller
             $result = $this->studentService->paginate(5);
             return response()->json(['students'=>$result],200);
         }else{
-            return response()->json(["success"=>$response->message()],401);
+            return response()->json([
+                "success"=> false,
+                'message' => $response->message()
+            ],401);
         }
     }
 
@@ -45,7 +48,10 @@ class StudentController extends Controller
             $result = $this->studentService->store($request);
             return response()->json(['success' => __('message.CreatedStudent'),"data" => $result],201);
         }else{
-            return response()->json(['success' => $response->message()],401);
+            return response()->json([
+                "success"=> false,
+                'message' => $response->message()
+            ],401);
         }
     }
 
@@ -60,9 +66,15 @@ class StudentController extends Controller
         $response = Gate::inspect('view',$student);
         if($response->allowed()){
             $result = $this->studentService->show($student);
-            return response()->json(['student'=>$result],200);
+            return response()->json([
+                'success' => true,
+                'student'=>$result
+            ],200);
         }else{
-            return response()->json(['success' => $response->message()],401);
+            return response()->json([
+                "success"=> false,
+                'message' => $response->message()
+            ],401);
         }
     }
 
@@ -78,9 +90,16 @@ class StudentController extends Controller
         $response = Gate::inspect('update',$student);
         if($response->allowed()){
             $result = $this->studentService->update($request, $student);
-            return response()->json(['success' => __('message.UpdatedStudent'),"data" => $result]);
+            return response()->json([
+                'success' => true,
+                'message' => __('message.UpdatedStudent'),
+                "data" => $result
+            ]);
         }else{
-            return response()->json(['success' => $response->message()],401);
+            return response()->json([
+                "success"=> false,
+                'message' => $response->message()
+            ],401);
         }
     }
 
@@ -95,9 +114,15 @@ class StudentController extends Controller
         $response = Gate::inspect('delete',$student);
         if($response->allowed()){
             $result = $this->studentService->destroy($student);
-            return response()->json(['success' => __('message.DeletedStudent').$result->id]);
+            return response()->json([
+                'success' => true,
+                'message' => __('message.DeletedStudent').$result->id
+            ]);
         }else{
-            return response()->json(['success' => $response->message()],401);
+            return response()->json([
+                "success"=> false,
+                'message' => $response->message()
+            ],401);
         }
     }
 }
